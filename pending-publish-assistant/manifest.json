@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "店小秘待发布助手",
+  "version": "2.1.0",
+  "description": "店小秘待发布助手：面向待发布列表的自动编辑、描述生成与发布工具。",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "alarms",
+    "debugger",
+    "downloads"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "src/background/background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.dianxiaomi.com/*"],
+    "js": [
+        "src/config/config.js",
+        "src/platform/utils.js",
+        "src/state/product-state.js",
+        "src/state/error-types.js",
+        "src/shared/forbidden-sync.js",
+        "src/content/main.js",
+        "src/workflows/watermark-pipeline.js",
+        "src/workflows/mask-geometry.js",
+        "src/workflows/quality-guard.js",
+        "src/workflows/auto-publish.js"
+      ],
+      "css": ["style.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/platform/inject-open-hook.js"],
+      "matches": ["*://*.dianxiaomi.com/*"]
+    }
+  ]
+}

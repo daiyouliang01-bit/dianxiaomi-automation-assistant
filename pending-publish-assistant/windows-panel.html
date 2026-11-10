@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; display: flex; flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f6f8; color: #333; overflow: hidden;
+  }
+  header {
+    flex-shrink: 0; padding: 9px 12px; background: #1f2733; color: #fff;
+  }
+  header h3 { margin: 0; font-size: 14px; font-weight: 600; }
+  header .stats { font-size: 10px; color: #9fb0c3; margin-top: 2px; }
+  header .vision-model-status { font-size: 11px; color: #d8e7ff; margin-top: 5px; }
+
+  /* 表头：两列标题 */
+  .grid-head {
+    flex-shrink: 0; display: flex; font-size: 11px; font-weight: 700;
+    color: #6b7684; background: #eef0f3; border-bottom: 1px solid #e0e3e7;
+  }
+  .grid-head .h-win { width: 40%; padding: 6px 10px; border-right: 1px solid #e0e3e7; }
+  .grid-head .h-log { flex: 1; padding: 6px 10px; }
+
+  /* 行区：一行一个窗口，可竖向滚动 */
+  .rows { flex: 1; overflow-y: auto; }
+  .empty { color: #99a2ad; font-size: 12px; padding: 20px 10px; text-align: center; }
+
+  .row {
+    display: flex; border-bottom: 1px solid #e6e8eb; min-height: 76px;
+    background: #fff;
+  }
+  .row:nth-child(even) { background: #fafbfc; }
+
+  /* 左格：窗口 */
+  .cell-win {
+    width: 40%; flex-shrink: 0; padding: 9px 10px;
+    border-right: 1px solid #eceef1; display: flex; flex-direction: column; gap: 7px;
+    justify-content: center;
+  }
+  .cell-win .win-name { font-size: 12px; font-weight: 600; color: #1f2733; line-height: 1.3; }
+  .cell-win .win-id { font-size: 10px; color: #99a2ad; word-break: break-all; }
+  .cell-win button {
+    align-self: flex-start; padding: 4px 12px; font-size: 11px; border: none;
+    border-radius: 5px; background: #1677ff; color: #fff; cursor: pointer;
+  }
+  .cell-win button:hover { background: #4096ff; }
+  .cell-win button:disabled { background: #cbd2da; cursor: not-allowed; }
+
+  /* 右格：这个窗口自己的信息流 */
+  .cell-log {
+    flex: 1; padding: 6px 8px; max-height: 150px; overflow-y: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .log-row {
+    display: flex; gap: 6px; padding: 2px 2px; font-size: 11px;
+    line-height: 1.35; color: #4a5057;
+  }
+  .log-row .t { flex-shrink: 0; color: #aab2bd; }
+  .log-row .m { flex: 1; word-break: break-word; }
+  .log-row.done .m { color: #18a058; }
+  .log-row.excluded .m { color: #e07a3c; }
+  .log-row.step .m { color: #1f2733; font-weight: 600; }
+  .log-empty { color: #b7bec7; font-size: 11px; padding: 4px 2px; }
+</style>
+</head>
+<body>
+  <header>
+    <h3>🪟 自动发布控制台</h3>
+    <div class="vision-model-status" id="vision-model-status">🤖 当前图片模型：等待批次启动</div>
+    <div class="stats" id="stats"></div>
+  </header>
+  <div class="grid-head">
+    <div class="h-win">窗口</div>
+    <div class="h-log">信息流</div>
+  </div>
+  <div class="rows" id="rows"></div>
+  <script src="src/panel/windows-panel.js"></script>
+</body>
+</html>

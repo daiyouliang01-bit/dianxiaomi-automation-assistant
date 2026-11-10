@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { width: 320px; padding: 15px; font-family: sans-serif; background: #f9f9f9; }
+    h3 { margin: 0 0 15px 0; font-size: 16px; color: #333; }
+
+    .btn {
+      width: 100%; padding: 10px; border: none; border-radius: 6px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      display: flex; justify-content: center; align-items: center;
+      background: #1890ff; color: white;
+    }
+    .btn:hover { background: #40a9ff; }
+    .btn:disabled { background: #ccc; cursor: not-allowed; }
+
+    .btn-save { background: #52c41a; margin-top: 5px; }
+    .btn-save:hover { background: #73d13d; }
+
+    #status { margin-top: 15px; font-size: 12px; color: #666; padding: 10px; background: white; border-radius: 4px; border: 1px solid #eee; min-height: 40px; }
+    .success { color: #52c41a; font-weight: bold; }
+    .error { color: #ff4d4f; }
+    .info-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px; color: #888; }
+    
+    .divider { height: 1px; background: #ddd; margin: 15px 0; }
+    
+    .input-group { margin-bottom: 10px; }
+    .input-group label { display: block; font-size: 12px; color: #333; margin-bottom: 5px; font-weight: bold;}
+    .input-group input { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; }
+    .input-group textarea { width: 100%; min-height: 58px; box-sizing: border-box; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; font-family: inherit; resize: vertical; }
+    .hint { margin: -4px 0 8px; color: #888; font-size: 11px; line-height: 1.45; }
+    .brand-title { margin: 10px 0 5px; color: #555; font-size: 12px; font-weight: bold; }
+    .brand-tags { display: flex; flex-wrap: wrap; gap: 5px; max-height: 116px; overflow-y: auto; padding: 2px; }
+    .brand-tag { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 4px 6px; color: #135200; background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 4px; font-size: 11px; }
+    .brand-tag.readonly { color: #1d39c4; background: #f0f5ff; border-color: #adc6ff; }
+    .brand-tag button { width: 14px; height: 14px; padding: 0; color: #389e0d; border: 0; background: transparent; cursor: pointer; font-size: 14px; line-height: 12px; }
+    .brand-tag button:hover { color: #cf1322; }
+    .empty-brand { color: #aaa; font-size: 11px; padding: 3px 0; }
+    .brand-message { min-height: 17px; margin-top: 6px; font-size: 11px; line-height: 1.35; }
+    .brand-message.success { color: #389e0d; }
+    .brand-message.warning { color: #d46b08; }
+    details { margin-top: 10px; }
+    details summary { color: #555; cursor: pointer; font-size: 12px; font-weight: bold; }
+    details input { width: 100%; box-sizing: border-box; margin: 8px 0 5px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; }
+
+    /* ---- 去水印设置：独立视觉分区，跟上面发布助手自身的Gemini/千问物理隔开 ---- */
+    .dxm-wm-section { margin-top: 10px; padding: 10px; border-radius: 6px; border: 1px solid; }
+    .dxm-wm-section.wm-vision { background: #fff7e6; border-color: #ffd591; }
+    .dxm-wm-section.wm-template { background: #f0f5ff; border-color: #adc6ff; }
+    .dxm-wm-section h3 { margin: 0 0 4px; font-size: 14px; }
+    .dxm-wm-scope-note { margin: 0 0 10px; font-size: 11px; color: #874d00; line-height: 1.4; }
+    .wm-template .dxm-wm-scope-note { color: #1d39c4; }
+    .wm-provider-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 5px 0; font-size: 12px; }
+    .wm-provider-row .wm-provider-name { display: flex; align-items: center; gap: 5px; }
+    .wm-badge { font-size: 10px; padding: 1px 6px; border-radius: 8px; }
+    .wm-badge.on { background: #f6ffed; color: #389e0d; border: 1px solid #b7eb8f; }
+    .wm-badge.off { background: #fff1f0; color: #cf1322; border: 1px solid #ffa39e; }
+    .wm-provider-row input[type="password"] { width: 108px; box-sizing: border-box; padding: 4px 6px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px; }
+    .wm-provider-row button { padding: 4px 8px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; background: #d46b08; color: #fff; }
+    .wm-provider-row .wm-radio { margin-right: 2px; }
+    .wm-field { margin: 8px 0; font-size: 12px; }
+    .wm-field label { display: flex; justify-content: space-between; margin-bottom: 3px; color: #333; }
+    .wm-field input[type="range"] { width: 100%; }
+    .wm-field select { width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; }
+    .wm-preview-img { max-width: 100%; margin-top: 8px; border: 1px solid #ddd; border-radius: 4px; display: none; }
+    #wmStatus { margin-top: 8px; font-size: 11px; min-height: 16px; }
+  </style>
+</head>
+<body>
+  <h3>🛡️ 违禁词管家</h3>
+
+  <div class="info-row">
+    <span>当前本地库:</span>
+    <span id="currentCount">0</span>
+  </div>
+
+  <button id="syncBtn" class="btn">🔄 同步店小秘词库</button>
+  <div id="status">准备就绪。</div>
+
+  <div class="divider"></div>
+
+  <h3>🖼️ 去水印设置</h3>
+
+  <div class="dxm-wm-section wm-vision">
+    <h3>👁️ 水印消除 AI（图形logo检测）</h3>
+    <p class="dxm-wm-scope-note">独立模型体系，只用来识别图片里的图形logo水印；与上方"发布助手"自身用的 Gemini/千问完全无关，Key 分开存储。</p>
+    <div id="wmProviderList"></div>
+    <p class="hint" style="margin-top:6px;">点单选框切换当前使用的模型；在输入框填Key后点"保存"单独更新那一个。</p>
+
+    <div class="wm-field" style="margin-top:8px;">
+      <label for="wmDetectionMode"><span>检测方式</span></label>
+      <select id="wmDetectionMode">
+        <option value="ocr">仅本地OCR（最快，无模型费用，会漏纯图形logo）</option>
+        <option value="mixed">OCR + 模型 混用（推荐）</option>
+        <option value="model">纯模型（完全按云视觉判定）</option>
+      </select>
+    </div>
+    <div class="wm-field" id="wmMixedTriggerField">
+      <label for="wmMixedTrigger"><span>混用时何时调模型</span></label>
+      <select id="wmMixedTrigger">
+        <option value="always">每张都调（最全）</option>
+        <option value="ocr_miss">仅当OCR没检出水印时才调（省时省钱，专补纯图形logo盲区）</option>
+      </select>
+    </div>
+    <p class="hint">"混用+仅OCR没检出时才调"是又快又不漏的折中：OCR自己抓到水印的就不再调模型。</p>
+  </div>
+
+  <div class="dxm-wm-section wm-run" style="background:#f6ffed; border:1px solid #b7eb8f; margin-top:10px; padding:10px; border-radius:6px;">
+    <h3>⚙️ 运行模式</h3>
+    <div class="wm-field">
+      <label for="wmReviewMode"><span>去水印后</span></label>
+      <select id="wmReviewMode">
+        <option value="review">停下让我检查图片（默认）</option>
+        <option value="auto">全自动，不停，直接继续发布</option>
+      </select>
+    </div>
+    <p class="hint">选"全自动"就不再弹"图片已检查，继续"，去水印完直接生成营销图/写描述/发布。</p>
+  </div>
+
+  <div class="dxm-wm-section wm-rules" style="background:#f9f0ff; border:1px solid #d3adf7; margin-top:10px; padding:10px; border-radius:6px;">
+    <h3>🧪 模型判定沉淀 → 可复用规则草稿</h3>
+    <p class="hint">用"混用/纯模型"跑一批商品后，这里把模型的判定自动梳理成统计草稿（模型最常排除哪几类、水印一般是什么类型/落在哪），供你决定要不要固化进本地规则、少调模型。</p>
+    <button id="wmRuleSummaryBtn" class="btn" style="background:#722ed1;">📊 梳理当前模型判定</button>
+    <pre id="wmRuleSummary" style="display:none; margin-top:8px; font-size:11px; white-space:pre-wrap; word-break:break-all; background:#fff; border:1px solid #eee; border-radius:4px; padding:8px; max-height:220px; overflow:auto;"></pre>
+  </div>
+
+  <div class="dxm-wm-section wm-template">
+    <h3>🏷️ 水印模板</h3>
+    <p class="dxm-wm-scope-note">消除原水印后，合成到图片上的自有品牌水印样式。</p>
+    <div class="wm-field">
+      <label><span>启用自有水印</span><input type="checkbox" id="wmEnabled" /></label>
+    </div>
+    <div class="wm-field">
+      <label for="wmTemplateId">模板</label>
+      <select id="wmTemplateId">
+        <option value="785">785</option>
+        <option value="786">786</option>
+      </select>
+    </div>
+    <div class="wm-field">
+      <label for="wmApplyScope">应用范围</label>
+      <select id="wmApplyScope">
+        <option value="all">全部图片</option>
+        <option value="skip_first">跳过第一张</option>
+        <option value="first_only">仅第一张</option>
+      </select>
+    </div>
+    <div class="wm-field">
+      <label for="wmOpacity"><span>透明度</span><span id="wmOpacityVal"></span></label>
+      <input type="range" id="wmOpacity" min="0" max="1" step="0.05" />
+    </div>
+    <div class="wm-field">
+      <label for="wmLogoScale"><span>Logo大小</span><span id="wmLogoScaleVal"></span></label>
+      <input type="range" id="wmLogoScale" min="0" max="0.8" step="0.01" />
+    </div>
+    <div class="wm-field">
+      <label for="wmTextScale"><span>文字大小</span><span id="wmTextScaleVal"></span></label>
+      <input type="range" id="wmTextScale" min="0" max="0.8" step="0.01" />
+    </div>
+    <button id="wmSaveSettingsBtn" class="btn btn-save" style="background:#2f54eb;">💾 保存水印模板设置</button>
+    <button id="wmPreviewBtn" class="btn" style="background:#597ef7; margin-top:6px;">👁️ 预览效果</button>
+    <img id="wmPreviewImg" class="wm-preview-img" alt="水印预览" />
+  </div>
+
+  <div id="wmStatus"></div>
+
+  <script src="src/shared/forbidden-sync.js"></script>
+  <script src="src/popup/popup.js"></script>
+  <script src="src/popup/popup-watermark.js"></script>
+</body>
+</html>

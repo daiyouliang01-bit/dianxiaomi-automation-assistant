@@ -1,0 +1,313 @@
+
+
+/* --- 📋 体检报告弹窗 --- */
+#check-report-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 650px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  z-index: 1000000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: sans-serif;
+  border: 1px solid #eee;
+}
+
+/* 头部 */
+.report-header {
+  padding: 16px 24px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.report-title { font-size: 18px; font-weight: 600; color: #333; }
+.report-close { cursor: pointer; font-size: 20px; color: #999; padding: 4px; }
+.report-close:hover { color: #333; }
+
+/* 内容表格 */
+.report-body {
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.report-table { width: 100%; border-collapse: collapse; }
+.report-table th, .report-table td {
+  padding: 12px 24px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #555;
+}
+.report-table th { background: #fafafa; color: #888; font-weight: 500; }
+
+/* 颜色标识 */
+.loc-tag { padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+.loc-title { color: #1890ff; background: #e6f7ff; border: 1px solid #91d5ff; }
+.loc-desc { color: #fa8c16; background: #fff7e6; border: 1px solid #ffd591; }
+.loc-attr { color: #722ed1; background: #f9f0ff; border: 1px solid #d3adf7; }
+
+.danger-word {
+  color: #ff4d4f;
+  font-weight: bold;
+  background: #fff1f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px dashed #ffccc7;
+}
+
+/* 按钮 */
+.action-btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-right: 8px;
+  border: none;
+}
+.btn-delete { background: #ff4d4f; color: white; }
+.btn-delete:hover { background: #ff7875; }
+.btn-whitelist { background: #f5f5f5; color: #666; border: 1px solid #d9d9d9; }
+.btn-whitelist:hover { border-color: #1890ff; color: #1890ff; background: white; }
+
+/* 遮罩 */
+#modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 999999;
+  backdrop-filter: blur(2px);
+}
+
+/* --- ✨ AI 优化按钮 --- */
+.ai-optimize-btn {
+  background: linear-gradient(135deg, #1890ff, #36cfc9);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(24, 144, 255, 0.3);
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+.ai-optimize-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(24, 144, 255, 0.4);
+}
+.ai-optimize-btn:active {
+  transform: translateY(1px);
+}
+.ai-optimize-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- 🌟 Toast 提示 --- */
+.ai-toast {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #52c41a;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+  z-index: 9999999;
+  animation: slideDown 0.3s ease-out, fadeOut 0.5s ease-in 2s forwards;
+}
+
+@keyframes slideDown {
+  from { top: 0px; opacity: 0; }
+  to { top: 60px; opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* --- 待发布自动发布模块 --- */
+#dxm-auto-publish-controls { display: inline-flex; gap: 8px; margin-left: 10px; vertical-align: middle; }
+.dxm-start-btn { background: linear-gradient(135deg, #13c2c2, #08979c); }
+.dxm-start-btn.running { background: linear-gradient(135deg, #ff4d4f, #cf1322); }
+.dxm-template-btn { background: linear-gradient(135deg, #722ed1, #9254de); }
+
+#dxm-template-overlay {
+  position: fixed; inset: 0; z-index: 2147483646;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.48); font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.dxm-modal {
+  width: min(680px, calc(100vw - 40px)); background: #fff; color: #262626;
+  border-radius: 12px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+
+/* --- 工作流综合信息框：左侧固定、可拖动，取代原来居中的全屏遮罩 --- */
+#dxm-workflow-overlay {
+  position: fixed; left: 18px; top: 70px; z-index: 2147483646;
+  width: 300px; max-width: calc(100vw - 36px);
+  max-height: calc(100vh - 100px); overflow-y: auto;
+  background: #fff; color: #262626; border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.22);
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size: 13px; user-select: none;
+}
+.dxm-workflow-drag-handle {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 12px; cursor: move; border-radius: 10px 10px 0 0;
+  background: linear-gradient(135deg, #1677ff, #4096ff); color: #fff;
+  font-size: 13px; font-weight: 600;
+  /* 面板整体是 pointer-events:none（避免挡住底下店小秘页面的真实点击，
+     尤其是自动化用 CDP 模拟的"可信点击"，会按屏幕坐标真实命中最上层
+     元素），只有拖动条这一小条恢复可交互，供人工拖动面板位置用。 */
+  pointer-events: auto;
+}
+.dxm-workflow-toggle { cursor: pointer; opacity: .85; padding: 0 4px; }
+.dxm-workflow-toggle:hover { opacity: 1; }
+.dxm-workflow-body { padding: 10px 12px; }
+.dxm-workflow-panel-collapsed .dxm-workflow-body { display: none; }
+.dxm-workflow-product { font-size: 11px; color: #8c8c8c; margin-bottom: 6px; word-break: break-all; }
+#dxm-workflow-message { font-size: 13px; line-height: 1.5; color: #262626; }
+/* 综合信息流：最近5条滚动日志 */
+.dxm-workflow-log {
+  margin-top: 8px; display: flex; flex-direction: column; gap: 3px;
+  /* 固定高度容纳约5行，超出的靠 scrollTop 自动滚到底，形成滚动效果 */
+  max-height: 108px; overflow-y: auto;
+  border-top: 1px dashed #eee; padding-top: 6px;
+}
+.dxm-workflow-log-row {
+  display: flex; gap: 6px; align-items: baseline;
+  padding: 3px 6px; border-radius: 5px; background: #f5f5f5; font-size: 11px; line-height: 1.4;
+}
+.dxm-workflow-log-row .t { color: #bfbfbf; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.dxm-workflow-log-row .m { color: #595959; }
+.dxm-workflow-log-row.done { background: #f6ffed; }
+.dxm-workflow-log-row.done .m { color: #389e0d; }
+.dxm-workflow-log-row.excluded { background: #fafafa; }
+.dxm-workflow-log-row.excluded .m { color: #bfbfbf; }
+.dxm-modal-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.dxm-modal-hint { color: #8c8c8c; font-size: 13px; margin-bottom: 12px; }
+#dxm-template-textarea {
+  display: block; box-sizing: border-box; width: 100%; height: 300px; resize: vertical;
+  border: 1px solid #d9d9d9; border-radius: 8px; padding: 12px; line-height: 1.55; font-size: 14px;
+}
+.dxm-template-image-label {
+  display: block; margin-top: 12px; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #262626;
+}
+#dxm-template-image-url {
+  display: block; box-sizing: border-box; width: 100%;
+  border: 1px solid #d9d9d9; border-radius: 8px; padding: 9px 10px; font-size: 13px;
+}
+.dxm-template-image-tools {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px;
+}
+.dxm-template-image-tools button {
+  border: 1px solid #d9d9d9; border-radius: 6px; background: #fff; padding: 6px 12px; cursor: pointer;
+}
+.dxm-template-image-preview {
+  margin-top: 8px; min-height: 36px; max-height: 150px; overflow: auto;
+  border: 1px dashed #d9d9d9; border-radius: 8px; padding: 8px; color: #8c8c8c; font-size: 12px;
+}
+.dxm-template-image-preview img {
+  display: block; max-width: 100%; max-height: 130px; margin: 0 auto; object-fit: contain;
+}
+.dxm-modal-actions, .dxm-workflow-actions {
+  display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;
+}
+.dxm-modal-actions button, .dxm-workflow-actions button {
+  border: 1px solid #d9d9d9; border-radius: 6px; background: #fff; padding: 8px 16px; cursor: pointer;
+}
+.dxm-modal-actions button.primary, .dxm-workflow-actions button.primary {
+  border-color: #1677ff; background: #1677ff; color: #fff;
+}
+
+#dxm-image-review-panel {
+  position: fixed; top: 70px; right: 18px; z-index: 2147483645;
+  box-sizing: border-box; width: 260px; max-height: calc(100vh - 110px); overflow: auto;
+  background: #fff; color: #262626; border: 1px solid #d9d9d9; border-radius: 8px;
+  padding: 10px; box-shadow: 0 10px 26px rgba(0,0,0,.18);
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.dxm-review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.dxm-review-header strong { font-size: 13px; }
+.dxm-review-header button {
+  border: 1px solid #1677ff; color: #1677ff; background: #fff;
+  border-radius: 6px; padding: 3px 7px; cursor: pointer; font-size: 12px;
+}
+.dxm-review-status {
+  margin: 0 0 6px; padding: 5px 7px; border-radius: 6px;
+  font-size: 12px; line-height: 1.35; border: 1px solid transparent;
+}
+.dxm-review-status.ok { color: #237804; background: #f6ffed; border-color: #b7eb8f; }
+.dxm-review-status.warn { color: #ad6800; background: #fffbe6; border-color: #ffe58f; }
+.dxm-review-gallery {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  max-height: 330px; overflow: auto; padding: 2px;
+}
+.dxm-review-thumb { position: relative; aspect-ratio: 1; border: 1px solid #e8e8e8; border-radius: 6px; overflow: hidden; background: #fafafa; }
+.dxm-review-thumb img { width: 100%; height: 100%; object-fit: contain; }
+.dxm-review-thumb span {
+  position: absolute; z-index: 1; top: 3px; left: 3px; min-width: 18px; height: 18px;
+  line-height: 18px; text-align: center; border-radius: 9px; color: #fff; background: rgba(0,0,0,.65); font-size: 11px;
+}
+.dxm-review-empty { grid-column: 1 / -1; color: #8c8c8c; padding: 24px 8px; text-align: center; }
+.dxm-review-note { margin: 6px 0 0; color: #595959; line-height: 1.45; font-size: 12px; }
+
+#dxm-manual-image-panel,
+#dxm-manual-wireless-panel,
+.dxm-manual-panel {
+  position: fixed; right: 20px; top: 50%; transform: translateY(-38%); z-index: 2147483647;
+  width: 390px; max-width: calc(100vw - 40px); box-sizing: border-box; background: #fff; color: #262626;
+  border: 1px solid #faad14; border-radius: 10px; padding: 14px;
+  box-shadow: 0 14px 38px rgba(0,0,0,.24);
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  pointer-events: auto;
+}
+.dxm-manual-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: #ad6800; }
+.dxm-manual-body { font-size: 13px; line-height: 1.55; margin-bottom: 8px; }
+.dxm-manual-tip { font-size: 12px; line-height: 1.45; color: #666; background: #fffbe6; border: 1px solid #ffe58f; border-radius: 7px; padding: 7px; margin-bottom: 10px; }
+.dxm-manual-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.dxm-manual-actions button {
+  border: 1px solid #d9d9d9; border-radius: 6px; background: #fff; padding: 6px 9px; cursor: pointer;
+  font-size: 13px;
+}
+.dxm-manual-actions button.primary {
+  border-color: #1677ff; background: #1677ff; color: #fff;
+}
+
+.dxm-step-focus {
+  outline: 4px solid rgba(250, 173, 20, .9) !important;
+  outline-offset: 4px !important;
+  border-radius: 6px;
+  animation: dxmStepPulse .7s ease-in-out 2;
+}
+
+/* 自动发布期间避免浏览器/翻译扩展把描述模板从英文改写成中文 */
+.dxm-no-translate-page #goog-gt-tt,
+.dxm-no-translate-page .goog-tooltip,
+.dxm-no-translate-page .goog-te-balloon-frame,
+.dxm-no-translate-page iframe.goog-te-menu-frame,
+[data-dxm-suppressed-translate-widget="1"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+@keyframes dxmStepPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(250, 173, 20, .25); }
+  50% { box-shadow: 0 0 0 10px rgba(250, 173, 20, .15); }
+}
