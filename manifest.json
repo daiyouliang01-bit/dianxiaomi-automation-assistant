@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "店小秘编辑助手 V2",
+  "version": "2.0.22",
+  "description": "店小秘自动化工具 V2：采集箱编辑（含定价/重量）+ 数据采集中心一键认领。",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.dianxiaomi.com/*",
+    "https://dashscope.aliyuncs.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "src/background/background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.dianxiaomi.com/*"],
+      "js": [
+        "src/config/config.js",
+        "src/platform/utils.js",
+        "src/domain/sku-mapping.js",
+        "src/domain/sku-pricing.js",
+        "src/page-adapters/rpa-page-targeting.js",
+        "src/safety/rpa-safety.js",
+        "src/safety/forbidden-words-cleaner.js",
+        "src/state/rpa-run-state.js",
+        "src/workflows/rpa-image-space.js",
+        "src/content/ui-injector.js",
+        "src/content/description-cleaner.js",
+        "src/content/batch-optimizer.js",
+        "src/workflows/plug-selection.js",
+        "src/workflows/sku-pricing-fill.js",
+        "src/workflows/dxm-claim.js",
+        "src/workflows/rpa.js",
+        "src/content/main.js"
+      ],
+      "css": ["style.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/platform/inject-open-hook.js"],
+      "matches": ["*://*.dianxiaomi.com/*"]
+    }
+  ]
+}

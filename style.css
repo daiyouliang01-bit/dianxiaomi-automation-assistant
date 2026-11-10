@@ -1,0 +1,141 @@
+
+
+/* --- 📋 体检报告弹窗 --- */
+#check-report-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 650px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  z-index: 1000000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: sans-serif;
+  border: 1px solid #eee;
+}
+
+/* 头部 */
+.report-header {
+  padding: 16px 24px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.report-title { font-size: 18px; font-weight: 600; color: #333; }
+.report-close { cursor: pointer; font-size: 20px; color: #999; padding: 4px; }
+.report-close:hover { color: #333; }
+
+/* 内容表格 */
+.report-body {
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.report-table { width: 100%; border-collapse: collapse; }
+.report-table th, .report-table td {
+  padding: 12px 24px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #555;
+}
+.report-table th { background: #fafafa; color: #888; font-weight: 500; }
+
+/* 颜色标识 */
+.loc-tag { padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+.loc-title { color: #1890ff; background: #e6f7ff; border: 1px solid #91d5ff; }
+.loc-desc { color: #fa8c16; background: #fff7e6; border: 1px solid #ffd591; }
+.loc-attr { color: #722ed1; background: #f9f0ff; border: 1px solid #d3adf7; }
+
+.danger-word {
+  color: #ff4d4f;
+  font-weight: bold;
+  background: #fff1f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px dashed #ffccc7;
+}
+
+/* 按钮 */
+.action-btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-right: 8px;
+  border: none;
+}
+.btn-delete { background: #ff4d4f; color: white; }
+.btn-delete:hover { background: #ff7875; }
+.btn-whitelist { background: #f5f5f5; color: #666; border: 1px solid #d9d9d9; }
+.btn-whitelist:hover { border-color: #1890ff; color: #1890ff; background: white; }
+
+/* 遮罩 */
+#modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 999999;
+  backdrop-filter: blur(2px);
+}
+
+/* --- ✨ AI 优化按钮 --- */
+.ai-optimize-btn {
+  background: linear-gradient(135deg, #1890ff, #36cfc9);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(24, 144, 255, 0.3);
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+.ai-optimize-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(24, 144, 255, 0.4);
+}
+.ai-optimize-btn:active {
+  transform: translateY(1px);
+}
+.ai-optimize-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- 🌟 Toast 提示 --- */
+.ai-toast {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #52c41a;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+  z-index: 9999999;
+  animation: slideDown 0.3s ease-out, fadeOut 0.5s ease-in 2s forwards;
+}
+
+@keyframes slideDown {
+  from { top: 0px; opacity: 0; }
+  to { top: 60px; opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; visibility: hidden; }
+}
